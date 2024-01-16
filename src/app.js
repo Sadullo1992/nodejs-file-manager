@@ -3,6 +3,7 @@ import { homedir } from "os";
 
 import { ls, cd, up } from "./navigation/index.js";
 import showCurrentDirectory from "./utils/showCurrentDirectory.js";
+import { read, create, rename, copy, move, remove } from "./fs/index.js";
 
 const HOME_DIR = homedir();
 
@@ -53,6 +54,24 @@ const controller = async (line) => {
           state.currentDir = cdDir;
         }
         break;
+      case "cat":
+        await read(state.currentDir, line);
+        break;
+      case "add":
+        await create(state.currentDir, line);
+        break;
+      case "rn":
+        await rename(state.currentDir, line);
+        break;
+      case "cp":
+        await copy(state.currentDir, line);
+        break;
+      case "mv":
+        await move(state.currentDir, line);
+        break;
+      case "rm":
+        await remove(state.currentDir, line);
+        break;
       case ".exit":
         rl.close();
         break;
@@ -61,7 +80,7 @@ const controller = async (line) => {
         break;
     }
   } catch (err) {
-    console.log(err);
+    console.log("Operation failed");
   } finally {
     showCurrentDirectory(state.currentDir);
     rl.prompt();
