@@ -1,8 +1,7 @@
 import { createInterface } from "readline";
 import { homedir } from "os";
-import path from "path";
 
-import { ls, cd } from "./navigation/index.js";
+import { ls, cd, up } from "./navigation/index.js";
 import showCurrentDirectory from "./utils/showCurrentDirectory.js";
 
 const HOME_DIR = homedir();
@@ -41,7 +40,7 @@ const controller = async (line) => {
     switch (line.trim().split(" ")[0]) {
       case "up":
         {
-          const upperDir = path.join(state.currentDir, "../");
+          const upperDir = up(state.currentDir);
           state.currentDir = upperDir;
         }
         break;
