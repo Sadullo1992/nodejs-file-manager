@@ -6,6 +6,7 @@ import showCurrentDirectory from "./utils/showCurrentDirectory.js";
 import { read, create, rename, copy, move, remove } from "./fs/index.js";
 import getOSInfo from "./os/getOSInfo.js";
 import calculateHash from "./hash/calculateHash.js";
+import { compress, decompress } from "./zip/index.js";
 
 const HOME_DIR = homedir();
 
@@ -80,6 +81,15 @@ const controller = async (line) => {
         break;
       case "hash":
         await calculateHash(state.currentDir, line);
+        break;
+      case "hash":
+        await calculateHash(state.currentDir, line);
+        break;
+      case "compress":
+        await compress(state.currentDir, line);
+        break;
+      case "decompress":
+        await decompress(state.currentDir, line);
         break;
       case ".exit":
         rl.close();
