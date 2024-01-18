@@ -4,6 +4,7 @@ import { homedir } from "os";
 import { ls, cd, up } from "./navigation/index.js";
 import showCurrentDirectory from "./utils/showCurrentDirectory.js";
 import { read, create, rename, copy, move, remove } from "./fs/index.js";
+import getOSInfo from "./os/getOSInfo.js";
 
 const HOME_DIR = homedir();
 
@@ -37,8 +38,9 @@ const state = {
 };
 
 const controller = async (line) => {
+  const cmd = line.trim().split(" ")[0];
   try {
-    switch (line.trim().split(" ")[0]) {
+    switch (cmd) {
       case "up":
         {
           const upperDir = up(state.currentDir);
@@ -71,6 +73,9 @@ const controller = async (line) => {
         break;
       case "rm":
         await remove(state.currentDir, line);
+        break;
+      case "os":
+        getOSInfo(line);
         break;
       case ".exit":
         rl.close();
