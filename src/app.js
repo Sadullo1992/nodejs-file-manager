@@ -5,6 +5,7 @@ import { ls, cd, up } from "./navigation/index.js";
 import showCurrentDirectory from "./utils/showCurrentDirectory.js";
 import { read, create, rename, copy, move, remove } from "./fs/index.js";
 import getOSInfo from "./os/getOSInfo.js";
+import calculateHash from "./hash/calculateHash.js";
 
 const HOME_DIR = homedir();
 
@@ -76,6 +77,9 @@ const controller = async (line) => {
         break;
       case "os":
         getOSInfo(line);
+        break;
+      case "hash":
+        await calculateHash(state.currentDir, line);
         break;
       case ".exit":
         rl.close();
