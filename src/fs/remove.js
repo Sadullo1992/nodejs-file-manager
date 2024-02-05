@@ -1,18 +1,18 @@
-import { existsSync } from "fs";
-import { unlink } from "fs/promises";
-import path from "path";
+import { rm } from "fs/promises";
+import { resolve } from "path";
+import { cwd } from "process";
+import { cmdLineParser, isFile } from "../utils/index.js";
 
-const remove = async (currentDir, line) => {
-  const fileName = line.split(" ")[1] ?? "";
+const remove = async (line) => {
+  const [_, ...rest] = cmdLineParser(line);
+  if (rest.length > 1) throw new Error("Redundant arguments occure");
 
-  const filePath = path.resolve(currentDir, fileName);
+  const filePath = rest[0];
+  const pathToFile = resolve(cwd(), filePath);
 
-  try {
-    if (!existsSync(filePath)) throw new Error("FS operation failed");
-    await unlink(filePath);
-  } catch (err) {
-    console.log("Operation failed");
-  }
+  const isFileExist = await isFile(pathToFile);
+  if (!isFileExist) throw new Error("Invalid file path");
+  await rm(pathToFile);
 };
 
 export default remove;

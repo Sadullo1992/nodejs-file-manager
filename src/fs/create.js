@@ -1,15 +1,21 @@
-import fs from "fs/promises";
-import path from "path";
+import { open } from "fs/promises";
+import { resolve } from "path";
+import { cwd } from "process";
+import { cmdLineParser } from "../utils/index.js";
 
-const create = async (currentDir, line) => {
-  const fileName = line.split(" ")[1] ?? "";
-  const pathToFile = path.resolve(currentDir, fileName);
+const create = async (line) => {
+  const [_, ...rest] = cmdLineParser(line);
+  if (rest.length > 1) throw new Error("Redundant arguments occure");
 
-   try {
-     await fs.open(pathToFile, 'wx');
-   } catch (err) {
-     console.log('Operation failed')
-   }
+  const filePath = rest[0];
+  const pathToFile = resolve(cwd(), filePath);
+
+  let fileHandle;
+  try {
+    fileHandle = await open(pathToFile, "wx");
+  } finally {
+    await fileHandle?.close();
+  }
 };
 
 export default create;

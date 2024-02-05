@@ -1,26 +1,28 @@
-import { existsSync, createReadStream, createWriteStream } from "fs";
-import { unlink } from 'fs/promises';
-import path from "path";
+import { createReadStream, createWriteStream } from "fs";
+import { rm } from "fs/promises";
+import { resolve } from "path";
+import { cwd } from "process";
 import { pipeline } from "stream/promises";
+import { cmdLineParser, isFile } from "../utils/index.js";
 
-const move = async (currentDir, line) => {
-  const fileName = line.split(" ")[1] ?? "";
-  const dest = line.split(" ")[2] ?? "";
+const move = async (line) => {
+  const [_, ...rest] = cmdLineParser(line);
+  if (rest.length !== 2)
+    throw new Error("Missing or redundant argument(s) occure");
 
-  const filePath = path.resolve(currentDir, fileName);
-  const destPath = path.resolve(currentDir, dest, fileName);
+  const filePath = rest[0];
+  const dest = rest[1];
 
-  const readable = createReadStream(filePath);
-  const writable = createWriteStream(destPath);
+  const fileToPath = resolve(cwd(), filePath);
+  const destToPath = resolve(cwd(), dest, filePath);
 
-  try {
-    if (!existsSync(filePath))
-      throw new Error("FS operation failed");
-    await pipeline(readable, writable);
-    await unlink(filePath);
-  } catch (err) {
-    console.log("Operation failed");
-  }
+  const isFileExist = await isFile(fileToPath);
+  if (!isFileExist) throw new Error("File doesn't exist");
+
+  const readable = createReadStream(fileToPath);
+  const writable = createWriteStream(destToPath);
+  await pipeline(readable, writable);
+  await rm(fileToPath);
 };
 
 export default move;

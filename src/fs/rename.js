@@ -1,21 +1,24 @@
 import fs from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
+import { resolve } from "path";
+import { cwd } from "process";
+import { cmdLineParser, isExist } from "../utils/index.js";
 
-const rename = async (currentDir, line) => {
-  const oldFileName = line.split(" ")[1] ?? "";
-  const newFileName = line.split(" ")[2] ?? "";
+const rename = async (line) => {
+  const [_, ...rest] = cmdLineParser(line);
+  if (rest.length !== 2)
+    throw new Error("Missing or redundant argument(s) occure");
 
-  const pathToOldFile = path.resolve(currentDir, oldFileName);
-  const pathToNewFile = path.resolve(currentDir, newFileName);
+  const oldFilePath = rest[0];
+  const newFilePath = rest[1];
 
-  try {
-    if (!existsSync(pathToOldFile) || existsSync(pathToNewFile))
-      throw new Error("FS operation failed");
-    await fs.rename(pathToOldFile, pathToNewFile);
-  } catch (err) {
-    console.log("Operation failed");
-  }
+  const pathToOldFile = resolve(cwd(), oldFilePath);
+  const pathToNewFile = resolve(cwd(), newFilePath);
+
+  const isExistOldFile = await isExist(pathToOldFile);
+  const isExistNewFile = await isExist(pathToNewFile);
+
+  if (!isExistOldFile || isExistNewFile) throw new Error("fs operation failed");
+  else await fs.rename(pathToOldFile, pathToNewFile);
 };
 
 export default rename;

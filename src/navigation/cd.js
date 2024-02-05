@@ -1,7 +1,6 @@
 import { resolve } from "path";
 import { chdir, cwd } from "process";
-import cmdLineParser from "../utils/cmdLineParser.js";
-import isDirectory from "../utils/isDirectory.js";
+import { cmdLineParser, isDirectory } from "../utils/index.js";
 
 const cd = async (line) => {
   const [_, ...rest] = cmdLineParser(line);

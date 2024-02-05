@@ -3,12 +3,11 @@ import { homedir } from "os";
 import { chdir } from "process";
 
 import { ls, cd, up } from "./navigation/index.js";
-import showCurrentDirectory from "./utils/showCurrentDirectory.js";
+import { showCurrentDirectory, getUserName } from "./utils/index.js";
 import { read, create, rename, copy, move, remove } from "./fs/index.js";
 import getOSInfo from "./os/getOSInfo.js";
 import calculateHash from "./hash/calculateHash.js";
 import { compress, decompress } from "./zip/index.js";
-import getUserName from "./utils/getUserName.js";
 
 const HOME_DIR = homedir();
 
@@ -46,24 +45,24 @@ const controller = async (line) => {
       case "cd":
         await cd(line);
         break;
-      // case "cat":
-      //   await read(state.currentDir, line);
-      //   break;
-      // case "add":
-      //   await create(state.currentDir, line);
-      //   break;
-      // case "rn":
-      //   await rename(state.currentDir, line);
-      //   break;
-      // case "cp":
-      //   await copy(state.currentDir, line);
-      //   break;
-      // case "mv":
-      //   await move(state.currentDir, line);
-      //   break;
-      // case "rm":
-      //   await remove(state.currentDir, line);
-      //   break;
+      case "cat":
+        await read(line);
+        break;
+      case "add":
+        await create(line);
+        break;
+      case "rn":
+        await rename(line);
+        break;
+      case "cp":
+        await copy(line);
+        break;
+      case "mv":
+        await move(line);
+        break;
+      case "rm":
+        await remove(line);
+        break;
       // case "os":
       //   getOSInfo(line);
       //   break;
@@ -87,6 +86,7 @@ const controller = async (line) => {
         break;
     }
   } catch (err) {
+    console.error(err);
     console.log("Operation failed");
   } finally {
     showCurrentDirectory();
