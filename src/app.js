@@ -63,9 +63,9 @@ const controller = async (line) => {
       case "rm":
         await remove(line);
         break;
-      // case "os":
-      //   getOSInfo(line);
-      //   break;
+      case "os":
+        getOSInfo(line);
+        break;
       // case "hash":
       //   await calculateHash(state.currentDir, line);
       //   break;

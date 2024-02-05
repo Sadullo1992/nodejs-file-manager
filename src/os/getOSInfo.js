@@ -11,7 +11,9 @@ export default function getOSInfo(line) {
       break;
     case "--cpus":
       {
-        const systemCpuCores = os.cpus();
+        const systemCpuCores = os
+          .cpus()
+          .map(({ model, speed }) => ({ model, speed: `${speed / 1000} GHz` }));
         console.log(systemCpuCores);
       }
       break;
