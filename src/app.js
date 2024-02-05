@@ -83,7 +83,6 @@ const controller = async (line) => {
         break;
     }
   } catch (err) {
-    console.error(err);
     console.log("Operation failed");
   } finally {
     showCurrentDirectory();
