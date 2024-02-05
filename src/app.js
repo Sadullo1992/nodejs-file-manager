@@ -66,18 +66,15 @@ const controller = async (line) => {
       case "os":
         getOSInfo(line);
         break;
-      // case "hash":
-      //   await calculateHash(state.currentDir, line);
-      //   break;
-      // case "hash":
-      //   await calculateHash(state.currentDir, line);
-      //   break;
-      // case "compress":
-      //   await compress(state.currentDir, line);
-      //   break;
-      // case "decompress":
-      //   await decompress(state.currentDir, line);
-      //   break;
+      case "hash":
+        await calculateHash(line);
+        break;
+      case "compress":
+        await compress(line);
+        break;
+      case "decompress":
+        await decompress(line);
+        break;
       case ".exit":
         rl.close();
         break;

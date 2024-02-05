@@ -1,17 +1,34 @@
-import zlib from "zlib";
+import { createBrotliDecompress } from "zlib";
 import { createWriteStream, createReadStream } from "fs";
-import path from "path";
+import { parse, resolve } from "path";
+import { cwd } from "process";
+import { cmdLineParser, isDirectory, isFile } from "../utils/index.js";
 
-const decompress = async (currentDir, line) => {
-  const fileName = line.split(" ")[1] ?? "";
-  const fileNameDestination = line.split(" ")[2] ?? "";
+const decompress = async (line) => {
+  const [_, ...rest] = cmdLineParser(line);
+  if (rest.length !== 2)
+    throw new Error("Missing or redundant argument(s) occure");
 
-  const pathToFile = path.resolve(currentDir, fileName);
-  const pathToDestination = path.resolve(currentDir, fileNameDestination);
+  const filePath = rest[0];
+  const dest = rest[1];
 
-  const brotli = zlib.createBrotliDecompress();
+  const pathToFile = resolve(cwd(), filePath);
+  const pathToDestination = resolve(cwd(), dest);
+
+  const isFileExist = await isFile(pathToFile);
+  const isDestinationExist = await isDirectory(pathToDestination);
+  if (!isFileExist) throw new Error("File doesn't exist");
+  if (!isDestinationExist)
+    throw new Error("Destination directory doesn't exist");
+
+  const { name, ext } = parse(pathToFile);
+  if (ext !== ".br") throw new Error("This is not compressed file");
+
+  const pathToDestinationFile = resolve(pathToDestination, name);
+
+  const brotli = createBrotliDecompress();
   const source = createReadStream(pathToFile);
-  const destination = createWriteStream(pathToDestination);
+  const destination = createWriteStream(pathToDestinationFile);
 
   source.pipe(brotli).pipe(destination);
 };
